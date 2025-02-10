@@ -1,14 +1,14 @@
 import { 
-    IonButtons,
-      IonContent, 
-      IonHeader, 
-      IonMenuButton, 
-      IonPage, 
-      IonTitle, 
-      IonToolbar 
-  } from '@ionic/react';
-  
-  function Home() {
+  IonButtons,
+    IonContent, 
+    IonHeader, 
+    IonMenuButton, 
+    IonPage, 
+    IonTitle, 
+    IonToolbar 
+} from '@ionic/react';
+
+const Template: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
@@ -16,13 +16,13 @@ import {
           <IonButtons slot='start'>
             <IonMenuButton></IonMenuButton>
           </IonButtons>
-          <IonTitle>Home</IonTitle>
+          <IonTitle>Template</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
       </IonContent>
     </IonPage>
   );
-}
-  
-  export default Home;
+};
+
+export default Template;
