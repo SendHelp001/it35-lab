@@ -15,11 +15,12 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { bookOutline, search, star } from "ionicons/icons";
+import { bookOutline, search, star, personCircleOutline } from "ionicons/icons";
 import { Route, Redirect } from "react-router";
 import Favorites from "./home-tabs/Favorites";
 import Search from "./home-tabs/Search";
 import Feed from "./home-tabs/Feed";
+import Profile from "./home-tabs/Profile";
 
 function Home() {
   const tabs = [
@@ -41,6 +42,12 @@ function Home() {
       url: "/it35-lab/app/home/favorites",
       icon: star,
     },
+    {
+      name: "Profile",
+      tab: "profile",
+      url: "/it35-lab/app/home/profile",
+      icon: personCircleOutline,
+    },
   ];
 
   return (
@@ -55,10 +62,10 @@ function Home() {
           ))}
         </IonTabBar>
         <IonRouterOutlet>
-          <Route exact path="/it35-lab/app/home/feed" render={Feed} />
-          <Route exact path="/it35-lab/app/home/search" render={Search} />
-          <Route exact path="/it35-lab/app/home/favorites" render={Favorites} />
-
+          <Route exact path="/it35-lab/app/home/feed" component={Feed} />
+          <Route exact path="/it35-lab/app/home/search" component={Search} />
+          <Route exact path="/it35-lab/app/home/favorites" component={Favorites} />
+          <Route exact path="/it35-lab/app/home/profile" component={Profile} />
           <Route exact path="/it35-lab/app/home">
             <Redirect to="/it35-lab/app/home/feed" />
           </Route>
