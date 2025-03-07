@@ -1,5 +1,6 @@
 import {
   IonAvatar,
+  IonButton,
   IonButtons,
   IonCard,
   IonCardContent,
@@ -8,6 +9,7 @@ import {
   IonCardTitle,
   IonContent,
   IonHeader,
+  IonIcon,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
   IonItem,
@@ -21,6 +23,7 @@ import {
   IonToolbar,
   RefresherEventDetail,
 } from "@ionic/react";
+import { heartOutline } from "ionicons/icons";
 import { useState, useEffect } from "react";
 
 const Feed: React.FC = () => {
@@ -75,6 +78,9 @@ const Feed: React.FC = () => {
                     <h2>{item}</h2>
                     <p>small text description.</p>
                   </IonLabel>
+                  <IonButton fill="clear">
+                    <IonIcon icon={heartOutline} />
+                  </IonButton>
                 </IonItem>
               </IonCardContent>
             </IonCard>
