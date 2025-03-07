@@ -1,6 +1,11 @@
 import {
   IonAvatar,
   IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
   IonContent,
   IonHeader,
   IonInfiniteScroll,
@@ -43,12 +48,23 @@ const Feed: React.FC = () => {
       <IonContent fullscreen>
         <IonList>
           {items.map((item, index) => (
-            <IonItem key={item}>
-              <IonAvatar slot="start">
-                <img src={"https://picsum.photos/80/80?random=" + index} alt="avatar" />
-              </IonAvatar>
-              <IonLabel>{item}</IonLabel>
-            </IonItem>
+            <IonCard key={item}>
+              <IonCardHeader>
+                <IonCardTitle>{item}</IonCardTitle>
+              </IonCardHeader>
+
+              <IonCardContent>
+                <IonItem lines="none">
+                  <IonAvatar slot="start">
+                    <img src={"https://picsum.photos/50/50?random=" + index} alt="avatar" />
+                  </IonAvatar>
+                  <IonLabel>
+                    <h2>{item}</h2>
+                    <p>small text description.</p>
+                  </IonLabel>
+                </IonItem>
+              </IonCardContent>
+            </IonCard>
           ))}
         </IonList>
         <IonInfiniteScroll
