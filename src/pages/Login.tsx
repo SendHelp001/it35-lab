@@ -24,6 +24,7 @@ import {
 
 const Login: React.FC = () => {
   const navigation = useIonRouter();
+  const index = Math.floor(Math.random() * 1000);
   const doLogin = () => {
     navigation.push("/it35-lab/app", "forward", "replace");
   };
@@ -52,24 +53,14 @@ const Login: React.FC = () => {
                 }}
               >
                 <IonAvatar>
-                  <img
-                    alt="Silhouette of a person's head"
-                    src="https://ionicframework.com/docs/img/demos/avatar.svg"
-                  />
+                  <img src={"https://picsum.photos/80/80?random=" + index} alt="avatar" />
                 </IonAvatar>
               </div>
               <IonItem>
-                <IonInput
-                  label="USERNAME"
-                  placeholder="Enter username..."
-                ></IonInput>
+                <IonInput label="USERNAME" placeholder="Enter username..."></IonInput>
               </IonItem>
               <IonItem>
-                <IonInput
-                  type="password"
-                  label="PASSWORD"
-                  value="NeverGonnaGiveYouUp"
-                >
+                <IonInput type="password" label="PASSWORD" value="NeverGonnaGiveYouUp">
                   <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
                 </IonInput>
               </IonItem>
