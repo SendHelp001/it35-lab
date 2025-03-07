@@ -29,7 +29,7 @@ import { useState, useEffect } from "react";
 const Feed: React.FC = () => {
   function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
     setTimeout(() => {
-      setItems([]);
+      initializeItems();
       event.detail.complete();
     }, 2000);
   }
@@ -42,6 +42,14 @@ const Feed: React.FC = () => {
       newItems.push(`Item ${1 + items.length + i}`);
     }
     setItems([...items, ...newItems]);
+  };
+
+  const initializeItems = () => {
+    const newItems = [];
+    for (let i = 0; i < 10; i++) {
+      newItems.push(`Item ${i + 1}`);
+    }
+    setItems(newItems);
   };
 
   useEffect(() => {
@@ -78,9 +86,9 @@ const Feed: React.FC = () => {
                     <h2>{item}</h2>
                     <p>small text description.</p>
                   </IonLabel>
-                  <IonButton fill="clear">
+                  {/* <IonButton fill="clear">
                     <IonIcon icon={heartOutline} />
-                  </IonButton>
+                  </IonButton> */}
                 </IonItem>
               </IonCardContent>
             </IonCard>
