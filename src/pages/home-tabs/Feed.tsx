@@ -15,17 +15,28 @@ import {
   IonList,
   IonMenuButton,
   IonPage,
+  IonRefresher,
+  IonRefresherContent,
   IonTitle,
   IonToolbar,
+  RefresherEventDetail,
 } from "@ionic/react";
 import { useState, useEffect } from "react";
 
 const Feed: React.FC = () => {
+  function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
+    setTimeout(() => {
+      setItems([]);
+      setTimeout(() => generateItems(), 0);
+      event.detail.complete();
+    }, 2000);
+  }
+
   const [items, setItems] = useState<string[]>([]);
 
   const generateItems = () => {
     const newItems = [];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 10; i++) {
       newItems.push(`Item ${1 + items.length + i}`);
     }
     setItems([...items, ...newItems]);
@@ -46,6 +57,9 @@ const Feed: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+          <IonRefresherContent></IonRefresherContent>
+        </IonRefresher>
         <IonList>
           {items.map((item, index) => (
             <IonCard key={item}>
