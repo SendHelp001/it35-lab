@@ -27,7 +27,6 @@ const Feed: React.FC = () => {
   function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
     setTimeout(() => {
       setItems([]);
-      setTimeout(() => generateItems(), 0);
       event.detail.complete();
     }, 2000);
   }
