@@ -87,7 +87,10 @@ const Feed: React.FC = () => {
             setTimeout(() => event.target.complete(), 500);
           }}
         >
-          <IonInfiniteScrollContent></IonInfiniteScrollContent>
+          <IonInfiniteScrollContent
+            loadingText="Please wait..."
+            loadingSpinner="bubbles"
+          ></IonInfiniteScrollContent>
         </IonInfiniteScroll>
       </IonContent>
     </IonPage>
