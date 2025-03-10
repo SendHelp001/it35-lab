@@ -20,21 +20,32 @@ import {
   IonToolbar,
   useIonRouter,
 } from "@ionic/react";
-import { eye, flag } from "ionicons/icons";
+import { useIonToast } from "@ionic/react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Login: React.FC = () => {
+  const [present] = useIonToast();
   const navigation = useIonRouter();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
 
-  const doSignup = () => {
-    navigation.push("/it35-lab/signup", "forward", "replace");
+  const presentToast = (position: "top" | "middle" | "bottom") => {
+    present({
+      color: "danger",
+      message: "Error, Invalid password or email!",
+      duration: 1500,
+      position: position,
+    });
   };
+
   const doLogin = () => {
-    if (email === "admin@gmail.com " && password === "password") {
+    if (email === "admin@gmail.com" && password === "password") {
       navigation.push("/it35-lab/app", "forward", "replace");
     } else {
+      presentToast("top");
+      setError(true);
     }
   };
   return (
@@ -45,7 +56,7 @@ const Login: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="">
-        <IonCard>
+        <IonCard style={{ height: "90%" }}>
           <IonCardHeader>
             <IonCardTitle></IonCardTitle>
           </IonCardHeader>
@@ -74,10 +85,13 @@ const Login: React.FC = () => {
                   <IonInputPasswordToggle slot="end" />
                 </IonInput>
               </div>
-              <IonButton onClick={() => doLogin()} expand="full" style={{ marginTop: 20 }}>
+              <IonButton onClick={() => doLogin()} expand="block" style={{ marginTop: 20 }}>
                 Login
               </IonButton>
-              <IonButton onClick={() => doSignup()} expand="full" style={{ marginTop: 10 }}>
+              <div style={{ textAlign: "center", marginTop: "80%" }}>
+                <span>Don't have an account yet? </span>
+              </div>
+              <IonButton routerLink="/it35-lab/signup" expand="block" style={{ marginTop: 10 }}>
                 Signup
               </IonButton>
             </IonList>
