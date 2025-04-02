@@ -20,7 +20,6 @@ import { useIonToast } from "@ionic/react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
-import bcrypt from "bcryptjs";
 
 const Signup: React.FC = () => {
   const [present] = useIonToast();
@@ -31,9 +30,6 @@ const Signup: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [username, setUsername] = useState("");
 
   const showToast = (message: string, color: "primary" | "danger") => {
     present({
@@ -50,49 +46,26 @@ const Signup: React.FC = () => {
       setShowAlert(true);
       return;
     }
-
     if (password !== confirmPassword) {
       setAlertMessage("Passwords do not match.");
       setShowAlert(true);
       return;
     }
-
     setShowVerificationModal(true);
   };
 
   const doRegister = async () => {
     setShowVerificationModal(false);
-
     try {
+      // Sign up in Supabase authentication
       const { data, error } = await supabase.auth.signUp({ email, password });
-
       if (error) {
         throw new Error("Account creation failed: " + error.message);
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-
-      const { error: insertError } = await supabase.from("users").insert([
-        {
-          username,
-          user_email: email,
-          user_firstname: firstName,
-          user_lastname: lastName,
-          user_password: hashedPassword,
-        },
-      ]);
-
-      if (insertError) {
-        throw new Error(`Failed to save user data: ${insertError.message}`);
-      }
-
+      // display the success modal
       setShowSuccessModal(true);
     } catch (err) {
-      if (err instanceof Error) {
-        setAlertMessage(err.message);
-      } else {
-        setAlertMessage("An unknown error occurred.");
-      }
+      setAlertMessage(err instanceof Error ? err.message : "An unknown error occurred.");
       setShowAlert(true);
     }
   };
@@ -111,14 +84,6 @@ const Signup: React.FC = () => {
           </IonCardHeader>
           <IonCardContent>
             <IonList>
-              <div style={{ marginTop: 10 }}>
-                <IonLabel position="stacked">Username</IonLabel>
-                <IonInput
-                  value={username}
-                  onIonChange={(e) => setUsername(e.detail.value!)}
-                  fill="outline"
-                />
-              </div>
               <div style={{ marginTop: 10 }}>
                 <IonLabel position="stacked">Email</IonLabel>
                 <IonInput
@@ -195,7 +160,7 @@ const Signup: React.FC = () => {
           </IonContent>
         </IonModal>
 
-        <IonModal isOpen={showSuccessModal}>
+        <IonModal isOpen={showSuccessModal} onDidDismiss={() => setShowSuccessModal(false)}>
           <IonContent>
             <div style={{ padding: 20, textAlign: "center" }}>
               <h2>Registration Successful</h2>
