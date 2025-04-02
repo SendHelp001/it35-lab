@@ -1,56 +1,102 @@
 import {
-  IonAvatar,
   IonButton,
-  IonButtons,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
   IonContent,
   IonHeader,
-  IonIcon,
   IonInput,
   IonInputPasswordToggle,
-  IonItem,
   IonLabel,
   IonList,
-  IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
-  useIonRouter,
+  IonAlert,
+  IonModal,
 } from "@ionic/react";
 import { useIonToast } from "@ionic/react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "../utils/supabaseClient";
+import bcrypt from "bcryptjs";
 
 const Signup: React.FC = () => {
   const [present] = useIonToast();
-  const navigation = useIonRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
 
-  const presentToast = (position: "top" | "middle" | "bottom") => {
+  const showToast = (message: string, color: "primary" | "danger") => {
     present({
-      color: "danger",
-      message: "Error, Invalid password or email!",
+      color,
+      message,
       duration: 1500,
-      position: position,
+      position: "top",
     });
   };
 
-  const doSignup = () => {
-    navigation.push("/it35-lab/signup", "forward", "replace");
+  const handleOpenVerificationModal = () => {
+    if (!email.endsWith("@nbsc.edu.ph")) {
+      setAlertMessage("Only @nbsc.edu.ph emails are allowed to register.");
+      setShowAlert(true);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setAlertMessage("Passwords do not match.");
+      setShowAlert(true);
+      return;
+    }
+
+    setShowVerificationModal(true);
   };
-  const doLogin = () => {
-    if (email === "admin@gmail.com" && password === "password") {
-      navigation.push("/it35-lab/app", "forward", "replace");
-    } else {
-      presentToast("top");
-      setError(true);
+
+  const doRegister = async () => {
+    setShowVerificationModal(false);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        throw new Error("Account creation failed: " + error.message);
+      }
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const { error: insertError } = await supabase.from("users").insert([
+        {
+          username,
+          user_email: email,
+          user_firstname: firstName,
+          user_lastname: lastName,
+          user_password: hashedPassword,
+        },
+      ]);
+
+      if (insertError) {
+        throw new Error("Failed to save user data: " + insertError.message);
+      }
+
+      setShowSuccessModal(true);
+    } catch (err) {
+      if (err instanceof Error) {
+        setAlertMessage(err.message);
+      } else {
+        setAlertMessage("An unknown error occurred.");
+      }
+      setShowAlert(true);
     }
   };
+
   return (
     <IonPage>
       <IonHeader>
@@ -58,21 +104,28 @@ const Signup: React.FC = () => {
           <IonTitle>Signup</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="">
+      <IonContent>
         <IonCard style={{ height: "90%" }}>
           <IonCardHeader>
-            <IonCardTitle></IonCardTitle>
+            <IonCardTitle>Create an Account</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <IonList>
-              <div>
+              <div style={{ marginTop: 10 }}>
+                <IonLabel position="stacked">Username</IonLabel>
+                <IonInput
+                  value={username}
+                  onIonChange={(e) => setUsername(e.detail.value!)}
+                  fill="outline"
+                />
+              </div>
+              <div style={{ marginTop: 10 }}>
                 <IonLabel position="stacked">Email</IonLabel>
                 <IonInput
                   type="email"
                   value={email}
                   onIonChange={(e) => setEmail(e.detail.value!)}
                   fill="outline"
-                  errorText="Invalid email"
                 />
               </div>
               <div style={{ marginTop: 10 }}>
@@ -83,7 +136,6 @@ const Signup: React.FC = () => {
                   onIonChange={(e) => setPassword(e.detail.value!)}
                   placeholder="************"
                   fill="outline"
-                  style={{ marginTop: 0 }}
                 >
                   <IonInputPasswordToggle slot="end" />
                 </IonInput>
@@ -92,17 +144,20 @@ const Signup: React.FC = () => {
                 <IonLabel position="stacked">Confirm Password</IonLabel>
                 <IonInput
                   type="password"
-                  value={password}
-                  onIonChange={(e) => setPassword(e.detail.value!)}
+                  value={confirmPassword}
+                  onIonChange={(e) => setConfirmPassword(e.detail.value!)}
                   placeholder="************"
                   fill="outline"
-                  style={{ marginTop: 0 }}
                 >
                   <IonInputPasswordToggle slot="end" />
                 </IonInput>
               </div>
-              <IonButton onClick={() => doLogin()} expand="block" style={{ marginTop: 20 }}>
-                Signup  
+              <IonButton
+                onClick={handleOpenVerificationModal}
+                expand="block"
+                style={{ marginTop: 20 }}
+              >
+                Signup
               </IonButton>
               <div style={{ textAlign: "center", marginTop: "60%" }}>
                 <span>Already have an account? </span>
@@ -111,6 +166,50 @@ const Signup: React.FC = () => {
             </IonList>
           </IonCardContent>
         </IonCard>
+
+        <IonAlert
+          isOpen={showAlert}
+          onDidDismiss={() => setShowAlert(false)}
+          header="Error🔴"
+          message={alertMessage}
+          buttons={["OK"]}
+        />
+
+        <IonModal isOpen={showVerificationModal}>
+          <IonContent>
+            <div style={{ padding: 20, textAlign: "center" }}>
+              <h2>Verify Your Information</h2>
+              <p>Are you sure you want to proceed with the registration?</p>
+              <IonButton onClick={doRegister} expand="block" style={{ marginTop: 20 }}>
+                Confirm
+              </IonButton>
+              <IonButton
+                onClick={() => setShowVerificationModal(false)}
+                expand="block"
+                color="light"
+                style={{ marginTop: 10 }}
+              >
+                Cancel
+              </IonButton>
+            </div>
+          </IonContent>
+        </IonModal>
+
+        <IonModal isOpen={showSuccessModal}>
+          <IonContent>
+            <div style={{ padding: 20, textAlign: "center" }}>
+              <h2>Registration Successful</h2>
+              <p>You have successfully registered. Please check your email for verification.</p>
+              <IonButton
+                onClick={() => setShowSuccessModal(false)}
+                expand="block"
+                style={{ marginTop: 20 }}
+              >
+                Close
+              </IonButton>
+            </div>
+          </IonContent>
+        </IonModal>
       </IonContent>
     </IonPage>
   );

@@ -1,20 +1,15 @@
 import {
-  IonAvatar,
   IonButton,
-  IonButtons,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
   IonContent,
   IonHeader,
-  IonIcon,
   IonInput,
   IonInputPasswordToggle,
-  IonItem,
   IonLabel,
   IonList,
-  IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -22,7 +17,7 @@ import {
 } from "@ionic/react";
 import { useIonToast } from "@ionic/react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { supabase } from "../utils/supabaseClient";
 
 const Login: React.FC = () => {
   const [present] = useIonToast();
@@ -31,7 +26,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
-  const presentToast = (position: "top" | "middle" | "bottom") => {
+  const errorToast = (position: "top" | "middle" | "bottom") => {
     present({
       color: "danger",
       message: "Error, Invalid password or email!",
@@ -39,14 +34,26 @@ const Login: React.FC = () => {
       position: position,
     });
   };
+  const successToast = (position: "top" | "middle" | "bottom") => {
+    present({
+      color: "primary",
+      message: "Login successful! Redirecting....",
+      duration: 1500,
+      position: position,
+    });
+  };
 
-  const doLogin = () => {
-    if (email === "admin@gmail.com" && password === "password") {
-      navigation.push("/it35-lab/app", "forward", "replace");
-    } else {
-      presentToast("top");
+  const doLogin = async () => {
+    let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      errorToast("top");
       setError(true);
+      return;
     }
+    setTimeout(() => {
+      navigation.push("/it35-lab/app", "forward", "replace");
+    }, 300);
   };
   return (
     <IonPage>
