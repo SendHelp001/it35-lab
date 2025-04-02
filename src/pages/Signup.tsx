@@ -83,7 +83,7 @@ const Signup: React.FC = () => {
       ]);
 
       if (insertError) {
-        throw new Error("Failed to save user data: " + insertError.message);
+        throw new Error(`Failed to save user data: ${insertError.message}`);
       }
 
       setShowSuccessModal(true);
