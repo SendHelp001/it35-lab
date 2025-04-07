@@ -18,6 +18,7 @@ import {
 } from "@ionic/react";
 import { useIonToast } from "@ionic/react";
 import { useState } from "react";
+import bcrypt from "bcryptjs";
 import { Link } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
 
@@ -26,6 +27,7 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
@@ -56,16 +58,40 @@ const Signup: React.FC = () => {
 
   const doRegister = async () => {
     setShowVerificationModal(false);
+
     try {
       // Sign up in Supabase authentication
       const { data, error } = await supabase.auth.signUp({ email, password });
+
       if (error) {
         throw new Error("Account creation failed: " + error.message);
       }
-      // display the success modal
+
+      // Hash password before storing in the database
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // Insert user data into 'users' table
+      const { error: insertError } = await supabase.from("users").insert([
+        {
+          username,
+          user_email: email,
+          user_password: hashedPassword,
+        },
+      ]);
+
+      if (insertError) {
+        throw new Error("Failed to save user data: " + insertError.message);
+      }
+
       setShowSuccessModal(true);
     } catch (err) {
-      setAlertMessage(err instanceof Error ? err.message : "An unknown error occurred.");
+      // Ensure err is treated as an Error instance
+      if (err instanceof Error) {
+        setAlertMessage(err.message);
+      } else {
+        setAlertMessage("An unknown error occurred.");
+      }
       setShowAlert(true);
     }
   };
@@ -84,10 +110,19 @@ const Signup: React.FC = () => {
           </IonCardHeader>
           <IonCardContent>
             <IonList>
+              <IonLabel position="stacked">Username</IonLabel>
+              <IonInput
+                fill="outline"
+                type="text"
+                placeholder="Enter a unique username"
+                value={username}
+                onIonChange={(e) => setUsername(e.detail.value!)}
+              />
               <div style={{ marginTop: 10 }}>
                 <IonLabel position="stacked">Email</IonLabel>
                 <IonInput
                   type="email"
+                  placeholder="Enter a valid nbsc.edu.ph email"
                   value={email}
                   onIonChange={(e) => setEmail(e.detail.value!)}
                   fill="outline"
@@ -169,6 +204,7 @@ const Signup: React.FC = () => {
                 onClick={() => setShowSuccessModal(false)}
                 expand="block"
                 style={{ marginTop: 20 }}
+                routerLink="/it35-lab/"
               >
                 Close
               </IonButton>
