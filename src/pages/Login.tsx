@@ -26,10 +26,10 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
-  const errorToast = (position: "top" | "middle" | "bottom") => {
+  const errorToast = (position: "top" | "middle" | "bottom", errorMessage: string) => {
     present({
       color: "danger",
-      message: "Error, Invalid password or email!",
+      message: errorMessage,
       duration: 1500,
       position: position,
     });
@@ -47,7 +47,7 @@ const Login: React.FC = () => {
     let { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      errorToast("top");
+      errorToast("top", error.message); // Pass the error message to the toast
       setError(true);
       return;
     }
