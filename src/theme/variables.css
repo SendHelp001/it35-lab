@@ -1,2 +1,164 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
+/** Ionic CSS variables **/
+/* src/global.css */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&family=Manrope:wght@400;500&display=swap');
+
+.alert-font {
+    font-family: 'Manrope', sans-serif;
+}
+
+.alert-button-font {
+    font-family: 'Manrope', sans-serif;
+}
+:root {
+    /** primary **/
+    --ion-color-primary: #c6ff00;
+    /* Bright neon lime */
+    --ion-color-primary-rgb: 198, 255, 0;
+    --ion-color-primary-contrast: #000000;
+    --ion-color-primary-contrast-rgb: 0, 0, 0;
+    --ion-color-primary-shade: #aec800;
+    --ion-color-primary-tint: #caff1a;
+
+    /** secondary **/
+    --ion-color-secondary: #f4f4f4;
+    /* Light gray/white */
+    --ion-color-secondary-rgb: 244, 244, 244;
+    --ion-color-secondary-contrast: #000000;
+    --ion-color-secondary-contrast-rgb: 0, 0, 0;
+    --ion-color-secondary-shade: #d7d7d7;
+    --ion-color-secondary-tint: #f5f5f5;
+
+    /** tertiary **/
+    --ion-color-tertiary: #424242;
+    /* Dark gray */
+    --ion-color-tertiary-rgb: 66, 66, 66;
+    --ion-color-tertiary-contrast: #ffffff;
+    --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+    --ion-color-tertiary-shade: #3b3b3b;
+    --ion-color-tertiary-tint: #575757;
+
+    /** success **/
+    --ion-color-success: #4caf50;
+    --ion-color-success-rgb: 76, 175, 80;
+    --ion-color-success-contrast: #ffffff;
+    --ion-color-success-contrast-rgb: 255, 255, 255;
+    --ion-color-success-shade: #43a047;
+    --ion-color-success-tint: #5dbd62;
+
+    /** warning **/
+    --ion-color-warning: #ffeb3b;
+    --ion-color-warning-rgb: 255, 235, 59;
+    --ion-color-warning-contrast: #000000;
+    --ion-color-warning-contrast-rgb: 0, 0, 0;
+    --ion-color-warning-shade: #e0c836;
+    --ion-color-warning-tint: #ffe65e;
+
+    /** danger **/
+    --ion-color-danger: #f44336;
+    --ion-color-danger-rgb: 244, 67, 54;
+    --ion-color-danger-contrast: #ffffff;
+    --ion-color-danger-contrast-rgb: 255, 255, 255;
+    --ion-color-danger-shade: #d7392c;
+    --ion-color-danger-tint: #f5594e;
+
+    /** dark **/
+    --ion-color-dark: #000000;
+    /* Pure black */
+    --ion-color-dark-rgb: 0, 0, 0;
+    --ion-color-dark-contrast: #ffffff;
+    --ion-color-dark-contrast-rgb: 255, 255, 255;
+    --ion-color-dark-shade: #000000;
+    --ion-color-dark-tint: #1a1a1a;
+
+    /** medium **/
+    --ion-color-medium: #9e9e9e;
+    /* Medium gray */
+    --ion-color-medium-rgb: 158, 158, 158;
+    --ion-color-medium-contrast: #000000;
+    --ion-color-medium-contrast-rgb: 0, 0, 0;
+    --ion-color-medium-shade: #8d8d8d;
+    --ion-color-medium-tint: #bababa;
+
+    /** light **/
+    --ion-color-light: #ffffff;
+    /* Pure white */
+    --ion-color-light-rgb: 255, 255, 255;
+    --ion-color-light-contrast: #000000;
+    --ion-color-light-contrast-rgb: 0, 0, 0;
+    --ion-color-light-shade: #e0e0e0;
+    --ion-color-light-tint: #ffffff;
+
+    /** Custom Accent Color (the vibrant lime) **/
+    --ion-color-accent-lime: #c6ff00;
+    --ion-color-accent-lime-rgb: 198, 255, 0;
+    --ion-color-accent-lime-contrast: #000000;
+    --ion-color-accent-lime-contrast-rgb: 0, 0, 0;
+    --ion-color-accent-lime-shade: #aec800;
+    --ion-color-accent-lime-tint: #caff1a;
+
+    /** Background **/
+    --ion-background-color: #000000;
+    /* Black background */
+    --ion-background-color-rgb: 0, 0, 0;
+
+    /** Text Color **/
+    --ion-text-color: #c6ff00;
+    /* Bright neon lime text */
+    --ion-text-color-rgb: 198, 255, 0;
+
+    /** Toolbar **/
+    --ion-toolbar-background: var(--ion-color-dark);
+    /* Black toolbar */
+    --ion-toolbar-color: var(--ion-color-accent-lime);
+    /* Lime text on toolbar */
+
+    /** Tabbar **/
+    --ion-tab-bar-background: var(--ion-color-dark);
+    /* Black tab bar */
+    --ion-tab-bar-color: var(--ion-color-medium);
+    /* Medium gray icons/text */
+    --ion-tab-bar-color-selected: var(--ion-color-accent-lime);
+    /* Lime for selected tab */
+}
+
+.ios {
+    --ion-toolbar-background: var(--ion-color-dark);
+    --ion-toolbar-color: var(--ion-color-accent-lime);
+}
+
+.md {
+    --ion-toolbar-background: var(--ion-color-dark);
+    --ion-toolbar-color: var(--ion-color-accent-lime);
+}
+
+/** Dark theme (can be the same or slightly adjusted) **/
+.dark {
+    /** primary **/
+    --ion-color-primary: #c6ff00;
+    --ion-color-primary-rgb: 198, 255, 0;
+    --ion-color-primary-contrast: #000000;
+    --ion-color-primary-contrast-rgb: 0, 0, 0;
+    --ion-color-primary-shade: #aec800;
+    --ion-color-primary-tint: #caff1a;
+
+    /** secondary **/
+    --ion-color-secondary: #f4f4f4;
+    --ion-color-secondary-rgb: 244, 244, 244;
+    --ion-color-secondary-contrast: #000000;
+    --ion-color-secondary-contrast-rgb: 0, 0, 0;
+    --ion-color-secondary-shade: #d7d7d7;
+    --ion-color-secondary-tint: #f5f5f5;
+
+    /** ... other dark theme colors - adjust if needed ... **/
+
+    /** Background **/
+    --ion-background-color: #000000;
+    --ion-background-color-rgb: 0, 0, 0;
+
+    /** Text Color **/
+    --ion-text-color: #c6ff00;
+    --ion-text-color-rgb: 198, 255, 0;
+}
+
