@@ -28,7 +28,7 @@ import {
 import { User } from "@supabase/supabase-js";
 import { supabase } from "../utils/supabaseClient";
 import { pencil, trash } from "ionicons/icons";
-import styles from "./FeedContainer.module.css"; // Import the CSS module
+import styles from "./FeedContainer.module.css";
 
 interface Post {
   post_id: string;
@@ -53,6 +53,7 @@ const FeedContainer = () => {
     event: Event | null;
     postId: string | null;
   }>({ open: false, event: null, postId: null });
+  const [expandedPosts, setExpandedPosts] = useState<string[]>([]); // <<< Added this
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -142,10 +143,17 @@ const FeedContainer = () => {
     const newContent = e.detail.value!;
     setPostContent(newContent);
 
-    // Dynamically adjust the height based on content
     const textarea = e.target as HTMLIonTextareaElement;
-    textarea.style.height = "auto"; // Reset height to recalculate
+    textarea.style.height = "auto";
     textarea.style.height = `${textarea.scrollHeight}px`;
+  };
+
+  const toggleExpand = (postId: string) => {
+    if (expandedPosts.includes(postId)) {
+      setExpandedPosts(expandedPosts.filter((id) => id !== postId));
+    } else {
+      setExpandedPosts([...expandedPosts, postId]);
+    }
   };
 
   return (
@@ -157,6 +165,7 @@ const FeedContainer = () => {
           <IonTitle className={styles.feedTitle}>Community Feed</IonTitle>
         </IonToolbar>
       </IonHeader>
+
       <IonContent className="ion-padding">
         {user ? (
           <>
@@ -174,11 +183,11 @@ const FeedContainer = () => {
                     color: "var(--ion-color-light)",
                     background: "var(--ion-color-dark)",
                     fontFamily: '"Manrope", sans-serif',
-                    width: "100%", // Ensure it takes full width
+                    width: "100%",
                     padding: "10px",
-                    boxSizing: "border-box", // Include padding in width/height
-                    overflowY: "hidden", // Hide vertical scrollbar initially
-                    maxHeight: "200px", // Set a maximum height for scrollability
+                    boxSizing: "border-box",
+                    overflowY: "hidden",
+                    maxHeight: "200px",
                   }}
                 ></IonTextarea>
                 <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "10px" }}>
@@ -189,85 +198,106 @@ const FeedContainer = () => {
               </IonCardContent>
             </IonCard>
 
-            {posts.map((post) => (
-              <IonCard key={post.post_id} className={styles.postCard}>
-                <IonCardHeader className={styles.postCardHeader}>
-                  <IonRow className="ion-align-items-center">
-                    <IonCol size="auto">
-                      <IonAvatar style={{ width: "60px", height: "60px" }}>
-                        <img alt={post.username} src={post.avatar_url} />
-                      </IonAvatar>
-                    </IonCol>
-                    <IonCol>
-                      <IonCardTitle className={styles.username}>{post.username}</IonCardTitle>
-                      <IonCardSubtitle className={styles.timestamp}>
-                        {new Date(post.post_created_at).toLocaleString(undefined, {
-                          year: "numeric",
-                          month: "numeric",
-                          day: "numeric",
-                          hour: "numeric",
-                          minute: "numeric",
-                        })}
-                      </IonCardSubtitle>
-                    </IonCol>
-                    <IonCol size="auto">
+            {posts.map((post) => {
+              const isExpanded = expandedPosts.includes(post.post_id);
+              const previewLength = 150;
+              const shouldShowSeeMore = post.post_content.length > previewLength;
+              const displayedContent = isExpanded
+                ? post.post_content
+                : post.post_content.substring(0, previewLength) + (shouldShowSeeMore ? "..." : "");
+
+              return (
+                <IonCard key={post.post_id} className={styles.postCard}>
+                  <IonCardHeader className={styles.postCardHeader}>
+                    <IonRow className="ion-align-items-center">
+                      <IonCol size="auto">
+                        <IonAvatar style={{ width: "60px", height: "60px" }}>
+                          <img alt={post.username} src={post.avatar_url} />
+                        </IonAvatar>
+                      </IonCol>
+                      <IonCol>
+                        <IonCardTitle className={styles.username}>{post.username}</IonCardTitle>
+                        <IonCardSubtitle className={styles.timestamp}>
+                          {new Date(post.post_created_at).toLocaleString(undefined, {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                          })}
+                        </IonCardSubtitle>
+                      </IonCol>
+                      <IonCol size="auto">
+                        <IonButton
+                          fill="clear"
+                          onClick={(e) =>
+                            setPopoverState({
+                              open: true,
+                              event: e.nativeEvent,
+                              postId: post.post_id,
+                            })
+                          }
+                        >
+                          <IonIcon color="light" icon={pencil} />
+                        </IonButton>
+                      </IonCol>
+                    </IonRow>
+                  </IonCardHeader>
+
+                  <IonCardContent>
+                    <IonText className={styles.postContent}>{displayedContent}</IonText>
+                    {shouldShowSeeMore && (
                       <IonButton
                         fill="clear"
-                        onClick={(e) =>
-                          setPopoverState({
-                            open: true,
-                            event: e.nativeEvent,
-                            postId: post.post_id,
-                          })
-                        }
+                        size="small"
+                        onClick={() => toggleExpand(post.post_id)}
+                        className={styles.seeMoreButton}
                       >
-                        <IonIcon color="light" icon={pencil} />
+                        {isExpanded ? "See less" : "See more"}
                       </IonButton>
-                    </IonCol>
-                  </IonRow>
-                </IonCardHeader>
+                    )}
+                  </IonCardContent>
 
-                <IonCardContent>
-                  <IonText className={styles.postContent}>{post.post_content}</IonText>
-                </IonCardContent>
-
-                <IonPopover
-                  isOpen={popoverState.open && popoverState.postId === post.post_id}
-                  event={popoverState.event}
-                  onDidDismiss={() => setPopoverState({ open: false, event: null, postId: null })}
-                >
-                  <IonButton
-                    expand="full"
-                    fill="clear"
-                    className={styles.popoverButton}
-                    onClick={() => {
-                      startEditingPost(post);
-                      setPopoverState({ open: false, event: null, postId: null });
-                    }}
+                  {/* Popover */}
+                  <IonPopover
+                    isOpen={popoverState.open && popoverState.postId === post.post_id}
+                    event={popoverState.event}
+                    onDidDismiss={() => setPopoverState({ open: false, event: null, postId: null })}
                   >
-                    Edit Post
-                  </IonButton>
-                  <IonButton
-                    expand="full"
-                    fill="clear"
-                    color="danger"
-                    className={styles.deleteButton}
-                    onClick={() => {
-                      deletePost(post.post_id);
-                      setPopoverState({ open: false, event: null, postId: null });
-                    }}
-                  >
-                    Delete Post
-                  </IonButton>
-                </IonPopover>
-              </IonCard>
-            ))}
+                    <IonButton
+                      expand="full"
+                      fill="clear"
+                      className={styles.popoverButton}
+                      onClick={() => {
+                        startEditingPost(post);
+                        setPopoverState({ open: false, event: null, postId: null });
+                      }}
+                    >
+                      Edit Post
+                    </IonButton>
+                    <IonButton
+                      expand="full"
+                      fill="clear"
+                      color="danger"
+                      className={styles.deleteButton}
+                      onClick={() => {
+                        deletePost(post.post_id);
+                        setPopoverState({ open: false, event: null, postId: null });
+                      }}
+                    >
+                      Delete Post
+                    </IonButton>
+                  </IonPopover>
+                </IonCard>
+              );
+            })}
           </>
         ) : (
           <IonLabel className={styles.loadingLabel}>Fetching posts...</IonLabel>
         )}
       </IonContent>
 
+      {/* Modal for editing */}
       <IonModal
         isOpen={isModalOpen}
         onDidDismiss={() => setIsModalOpen(false)}
@@ -289,8 +319,6 @@ const FeedContainer = () => {
         </IonContent>
         <IonFooter className={styles.editModalFooter}>
           <IonToolbar className={styles.editModalFooter}>
-            {" "}
-            {/* Apply footer styles to the toolbar */}
             <IonButton
               slot="end"
               onClick={savePost}
@@ -312,6 +340,7 @@ const FeedContainer = () => {
         </IonFooter>
       </IonModal>
 
+      {/* Alert */}
       <IonAlert
         isOpen={isAlertOpen}
         onDidDismiss={() => setIsAlertOpen(false)}

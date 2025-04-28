@@ -173,3 +173,8 @@ ion-card-header {
   --ion-text-color: #c6ff00;
   --ion-text-color-rgb: 198, 255, 0;
 }
+
+/* Make space for bottom navbar globally */
+ion-content::part(scroll) {
+  padding-bottom: 70px; /* Adjust if your navbar is taller */
+}
