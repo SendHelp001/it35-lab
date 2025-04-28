@@ -248,10 +248,11 @@ const FeedContainer = () => {
                     <IonText className={styles.postContent}>{displayedContent}</IonText>
                     {shouldShowSeeMore && (
                       <IonButton
-                        fill="clear"
+                        fill="solid"
                         size="small"
                         onClick={() => toggleExpand(post.post_id)}
                         className={styles.seeMoreButton}
+                        style={{ fontFamily: '"Manrope", sans-serif' }}
                       >
                         {isExpanded ? "See less" : "See more"}
                       </IonButton>
