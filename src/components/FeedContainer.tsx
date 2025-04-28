@@ -311,17 +311,21 @@ const FeedContainer = () => {
               <IonButton
                 slot="end"
                 onClick={savePost}
-                strong
                 color="primary"
-                className={styles.saveButton}
+                className={styles.postButton}
+                style={{
+                  fontFamily: '"Manrope", sans-serif',
+                }}
               >
                 Save
               </IonButton>
               <IonButton
-                slot="start"
-                color="light"
                 onClick={() => setIsModalOpen(false)}
-                className={styles.cancelButton}
+                color="primary"
+                className={styles.postButton}
+                style={{
+                  fontFamily: '"Manrope", sans-serif',
+                }}
               >
                 Cancel
               </IonButton>
