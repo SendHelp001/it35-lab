@@ -26,7 +26,6 @@
   color: var(--ion-color-light);
   --background: var(--ion-color-dark);
   font-family: "Manrope", sans-serif;
-
 }
 
 .postInput::placeholder {
@@ -78,7 +77,6 @@
   border-radius: 10px;
   background-color: var(--ion-color-dark);
 }
-
 .editModalHeader {
   --background: transparent;
   --color: var(--ion-color-primary);
