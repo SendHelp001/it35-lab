@@ -44,6 +44,7 @@ const Login: React.FC = () => {
   };
 
   const doLogin = async () => {
+    console.log("Attempting login with:", { email, password });
     let { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {

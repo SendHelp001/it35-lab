@@ -23,6 +23,7 @@ import {
   IonRow,
   IonIcon,
   IonPopover,
+  IonTextarea,
 } from "@ionic/react";
 import { User } from "@supabase/supabase-js";
 import { supabase } from "../utils/supabaseClient";
@@ -137,6 +138,16 @@ const FeedContainer = () => {
     }
   };
 
+  const handleTextareaChange = (e: any) => {
+    const newContent = e.detail.value!;
+    setPostContent(newContent);
+
+    // Dynamically adjust the height based on content
+    const textarea = e.target as HTMLIonTextareaElement;
+    textarea.style.height = "auto"; // Reset height to recalculate
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  };
+
   return (
     <IonPage style={{ "--ion-background-color": "var(--ion-color-dark)" }}>
       <IonHeader>
@@ -154,13 +165,23 @@ const FeedContainer = () => {
                 <IonCardTitle className={styles.shareTitle}>Share Your Thoughts</IonCardTitle>
               </IonCardHeader>
               <IonCardContent>
-                <IonInput
+                <IonTextarea
                   value={postContent}
-                  onIonChange={(e) => setPostContent(e.detail.value!)}
+                  onIonChange={handleTextareaChange}
                   placeholder="What's on your mind?"
-                  className={styles.postInput}
-                />
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  className="custom-textarea"
+                  style={{
+                    color: "var(--ion-color-light)",
+                    background: "var(--ion-color-dark)",
+                    fontFamily: '"Manrope", sans-serif',
+                    width: "100%", // Ensure it takes full width
+                    padding: "10px",
+                    boxSizing: "border-box", // Include padding in width/height
+                    overflowY: "hidden", // Hide vertical scrollbar initially
+                    maxHeight: "200px", // Set a maximum height for scrollability
+                  }}
+                ></IonTextarea>
+                <div style={{ display: "flex", justifyContent: "flex-end", paddingTop: "10px" }}>
                   <IonButton onClick={createPost} color="primary" className={styles.postButton}>
                     Post
                   </IonButton>
